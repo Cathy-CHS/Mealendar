@@ -14,6 +14,7 @@ const getTodayString = () => {
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(getTodayString());
+  const [events, setEvents] = useState([]);
 
   return (
     <div className="app-container">
@@ -25,10 +26,15 @@ export default function Home() {
 
       <main className="main-grid">
         <div className="map-area">
-          <Map />
+          <Map events={events} />
         </div>
         <div className="schedule-area">
-          <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+          <Calendar 
+            selectedDate={selectedDate} 
+            setSelectedDate={setSelectedDate}
+            events={events}
+            setEvents={setEvents}
+          />
         </div>
         <div className="chat-area">
           <Chat selectedDate={selectedDate} />

@@ -10,6 +10,8 @@ import datetime
 from starlette.requests import Request
 import pytz
 import google.generativeai as genai
+import googlemaps
+from datetime import datetime as dt
 
 
 load_dotenv()
@@ -18,6 +20,10 @@ app = FastAPI()
 
 # Configure Google Gemini
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Configure Google Maps client for Geocoding
+gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
+
 
 # Add session middleware
 app.add_middleware(
@@ -185,6 +191,20 @@ async def get_calendar_events(request: Request, start_date: str = None):
             orderBy='startTime'
         ).execute()
         events = events_result.get('items', [])
+
+        # Geocode event locations
+        for event in events:
+            if 'location' in event and event['location']:
+                try:
+                    geocode_result = gmaps.geocode(event['location'])
+                    if geocode_result:
+                        event['coordinates'] = geocode_result[0]['geometry']['location']
+                except Exception as e:
+                    print(f"Geocoding failed for {event['location']}: {e}")
+                    event['coordinates'] = None
+            else:
+                event['coordinates'] = None
+
 
         return {"events": events}
 

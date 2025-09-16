@@ -8,9 +8,9 @@ const getTodayString = () => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-const Calendar = ({ selectedDate, setSelectedDate }) => {
+const Calendar = ({ selectedDate, setSelectedDate, events, setEvents }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [events, setEvents] = useState([]);
+  // const [events, setEvents] = useState([]); // This state is now managed by the parent
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -96,20 +96,23 @@ const Calendar = ({ selectedDate, setSelectedDate }) => {
           <div className="events-list">
             {events.length > 0 ? (
               <ul>
-                {events.map((event) => (
+                {events.map((event, index) => (
                   <li key={event.id} className="event-item">
-                    <strong>{event.summary}</strong>
-                    <p className="event-time">
-                      {event.start.dateTime
-                        ? new Date(event.start.dateTime).toLocaleTimeString(
-                            [],
-                            { hour: "numeric", minute: "2-digit" }
-                          )
+                    <div className="event-number">{index + 1}</div>
+                    <div className="event-details">
+                      <strong>{event.summary}</strong>
+                      <p className="event-time">
+                        {event.start.dateTime
+                          ? new Date(event.start.dateTime).toLocaleTimeString(
+                              [],
+                              { hour: "numeric", minute: "2-digit" }
+                            )
                         : "All day"}
-                    </p>
-                    {event.location && (
-                      <p className="event-location">📍 {event.location}</p>
-                    )}
+                      </p>
+                      {event.location && (
+                        <p className="event-location">📍 {event.location}</p>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -199,6 +202,8 @@ const Calendar = ({ selectedDate, setSelectedDate }) => {
           margin: 0;
         }
         .event-item {
+          display: flex;
+          align-items: flex-start;
           padding-bottom: 1rem;
           margin-bottom: 1rem;
           border-bottom: 1px solid var(--border-color);
@@ -206,8 +211,24 @@ const Calendar = ({ selectedDate, setSelectedDate }) => {
         .event-item:last-child {
           border-bottom: none;
         }
-        .event-time,
-        .event-location {
+        .event-number {
+          background-color: var(--accent-color);
+          color: white;
+          border-radius: 50%;
+          width: 1.5rem;
+          height: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          margin-right: 1rem;
+          flex-shrink: 0;
+        }
+        .event-details {
+          display: flex;
+          flex-direction: column;
+        }
+        .event-time, .event-location {
           color: var(--text-secondary-color);
           margin: 0.25rem 0 0;
           font-size: 0.9rem;

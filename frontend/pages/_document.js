@@ -5,7 +5,7 @@ export default function Document() {
     <Html>
       <Head>
         <script
-          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyApfLg-EMZbC070OaypWM5t08k4ErpRQH8&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           async
         ></script>
       </Head>
